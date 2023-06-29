@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Ray.h"
-#include "BVH.h"
 class material;
 struct hit_record {
     vec3 p;
@@ -8,6 +7,10 @@ struct hit_record {
     //光线会如何与表面交互是由具体的材质所决定的。hit_record在设计上就是为了把一堆要传的参数给打包在了一起。当光线射入一个表面(比如一个球体), hit_record中的材质指针会被球体的材质指针所赋值, 而球体的材质指针是在main()函数中构造时传入的。当color()函数获取到hit_record时, 他可以找到这个材质的指针, 然后由材质的函数来决定光线是否发生散射, 怎么散射。
     shared_ptr<material> mat_ptr;
     double t;
+    //为了添加纹理需要存储击中的uv信息
+    double u;
+    double v;
+
     bool front_face; //是否正面，外部射入
     /// <summary>
     /// 判断光线是从外部射入还是内部射入，永远让法相与入射方向相反, 我们就不用去用点乘来判断射入面是内侧还是外侧了, 但相对的, 我们需要用一个变量储存射入面的信息
@@ -31,3 +34,4 @@ public:
     virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
     virtual bool bounding_box(double t0, double t1, aabb& output_box) const = 0;
 };
+

@@ -41,4 +41,11 @@ inline double clamp(double x, double min, double max) {
     if (x > max) return max;
     return x;
 }
+
 // Common Headers
+#include "Ray.h"
+#include "Vec3.h"
+
+
+
+

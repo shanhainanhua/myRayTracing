@@ -11,8 +11,8 @@
 #include "utils.h"
 #include "Camera.h"
 #include "Material.h"
-#include "Ray.h"
-#include "Vec3.h"
+#include "BVH.h"
+#include "Texture.h"
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -46,9 +46,12 @@ vec3 ray_color(const ray& r,const hittableList& sceneObjects,int depth) {
 
 hittableList random_scene() {
     hittableList world;
+    auto checker = make_shared<checker_texture>(
+        make_shared<constant_texture>(vec3(0.2, 0.3, 0.1)),
+        make_shared<constant_texture>(vec3(0.9,0.9,0.9))
+        );
 
-    world.add(make_shared<sphere>(
-        vec3(0, -1000, 0), 1000, make_shared<lambertian>(vec3(0.5, 0.5, 0.5))));
+    world.add(make_shared<sphere>(vec3(0, -1000, 0), 1000, make_shared<lambertian>(checker)));
 
     int i = 1;
     for (int a = -10; a < 10; a++) {
@@ -59,9 +62,7 @@ hittableList random_scene() {
                 if (choose_mat < 0.8) {
                     // diffuse
                     auto albedo = vec3::random() * vec3::random();
-                    //world.add(
-                    //    make_shared<sphere>(center, 0.2, make_shared<lambertian>(albedo)));
-                    world.add(make_shared<moving_sphere>(center, center + vec3(0, random_double(0, .5), 0), 0.0, 1.0, 0.2, make_shared<lambertian>(albedo)));
+                    world.add(make_shared<moving_sphere>(center, center + vec3(0, random_double(0, .5), 0), 0.0, 1.0, 0.2, make_shared<lambertian_vec>(albedo)));
                 }
                 else if (choose_mat < 0.95) {
                     // metal
@@ -81,35 +82,48 @@ hittableList random_scene() {
     world.add(make_shared<sphere>(vec3(0, 1, 0), 1.0, make_shared<dielectric>(1.5)));
 
     world.add(
-        make_shared<sphere>(vec3(-4, 1, 0), 1.0, make_shared<lambertian>(vec3(0.4, 0.2, 0.1))));
+        make_shared<sphere>(vec3(-4, 1, 0), 1.0, make_shared<lambertian_vec>(vec3(0.4, 0.2, 0.1))));
 
     world.add(
         make_shared<sphere>(vec3(4, 1, 0), 1.0, make_shared<metal>(vec3(0.7, 0.6, 0.5), 0.0)));
 
-    return world;
+    //return world;
+    return static_cast<hittableList>(make_shared<bvh_node>(world, 0, 1));
 }
+hittableList two_perlin_spheres() {
+    hittableList objects;
 
+    auto pertext = make_shared<noise_texture>(3);
+    objects.add(make_shared<sphere>(vec3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
+    objects.add(make_shared<sphere>(vec3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
 
+    return objects;
+}
 // Main code
 int main(int, char**)
 {
-    const int image_width =200;
-    const int image_height =100;
-    const int samples_per_pixel = 100;
+    const int image_width =400;
+    const int image_height =200;
+    const int samples_per_pixel = 200;
     const int max_depth = 50;
     const auto aspect_ratio = double(image_width) / image_height;
     // 创建一个空白的图像
     cv::Mat image(image_height, image_width, CV_8UC3, cv::Scalar(0, 0, 0));
 
     //物体 如果将球的半径设为负值, 形状看上去并没什么变化, 但是法相全都翻转到内部去了。所以就可以用这个特性来做出一个通透的玻璃球:【把一个小球套在大球里, 光线发生两次折射, 于是负负得正, 上下不会颠倒】
-    hittableList sceneObjects;
-    sceneObjects.add(make_shared<sphere>(vec3(0, 0, -1), 0.5, make_shared<lambertian>(vec3(0.1, 0.2, 0.5))));
-    sceneObjects.add(make_shared<sphere>(
-        vec3(0, -100.5, -1), 100, make_shared<lambertian>(vec3(0.8, 0.8, 0.0))));
-    sceneObjects.add(make_shared<sphere>(vec3(1, 0, -1), 0.5, make_shared<metal>(vec3(0.8, 0.6, 0.2), 0.3)));
-    sceneObjects.add(make_shared<sphere>(vec3(-1, 0, -1), 0.5, make_shared<dielectric>(1.5)));
-    sceneObjects.add(make_shared<sphere>(vec3(-1, 0, -1), -0.45, make_shared<dielectric>(1.5)));
+    //hittableList sceneObjects;
+    //sceneObjects.add(make_shared<sphere>(vec3(0, 0, -1), 0.5, make_shared<lambertian>(vec3(0.1, 0.2, 0.5))));
+    //sceneObjects.add(make_shared<sphere>(
+    //    vec3(0, -100.5, -1), 100, make_shared<lambertian>(vec3(0.8, 0.8, 0.0))));
+    //sceneObjects.add(make_shared<sphere>(vec3(1, 0, -1), 0.5, make_shared<metal>(vec3(0.8, 0.6, 0.2), 0.3)));
+    //sceneObjects.add(make_shared<sphere>(vec3(-1, 0, -1), 0.5, make_shared<dielectric>(1.5)));
+    //sceneObjects.add(make_shared<sphere>(vec3(-1, 0, -1), -0.45, make_shared<dielectric>(1.5)));
     //相机
+    //vec3 lookfrom(13, 2, 3);
+    //vec3 lookat(0, 0, 0);
+    //vec3 vup(0, 1, 0);
+    //auto dist_to_focus = 10.0;
+    //auto aperture = 0.0;
     vec3 lookfrom(13, 2, 3);
     vec3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
@@ -117,7 +131,8 @@ int main(int, char**)
     auto aperture = 0.0;
     camera camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus,0.0,1.0);
     // 生成图像像素值
-    auto world = random_scene();
+    //auto world = random_scene();
+    auto world = two_perlin_spheres();
     for (int j = image_height - 1; j >= 0; --j) {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
         for (int i = 0; i < image_width; ++i) {

@@ -1,45 +1,9 @@
 ﻿#pragma once
+#include "HittableList.h"
 #include "Ray.h"
 #include <algorithm>
-#include "HittableList.h"
-class aabb {
-public:
-    aabb() {}
-    aabb(const vec3& a, const vec3& b) { _min = a; _max = b; }
-
-    vec3 min() const { return _min; }
-    vec3 max() const { return _max; }
-
-    bool hit(const ray& r, double tmin, double tmax) const {
-        for (int a = 0; a < 3; a++) {
-            auto t0 = ffmin((_min[a] - r.origin()[a]) / r.direction()[a],
-                (_max[a] - r.origin()[a]) / r.direction()[a]);
-            auto t1 = ffmax((_min[a] - r.origin()[a]) / r.direction()[a],
-                (_max[a] - r.origin()[a]) / r.direction()[a]);
-            tmin = ffmax(t0, tmin);
-            tmax = ffmin(t1, tmax);
-            if (tmax <= tmin)
-                return false;
-        }
-        return true;
-    }
-
-    vec3 _min;
-    vec3 _max;
-};
-
-aabb surrounding_box(aabb box0, aabb box1) {
-    vec3 small(ffmin(box0.min().x(), box1.min().x()),
-        ffmin(box0.min().y(), box1.min().y()),
-        ffmin(box0.min().z(), box1.min().z()));
-    vec3 big(ffmax(box0.max().x(), box1.max().x()),
-        ffmax(box0.max().y(), box1.max().y()),
-        ffmax(box0.max().z(), box1.max().z()));
-    return aabb(small, big);
-}
 
 
-//BVH也应该是`hittable`的一员, 就像`hittable_list`类那样。BVH虽然是个容器, 但也能对于问题“这条光线射中你了么?”做出回答
 class bvh_node : public hittable {
 public:
     bvh_node();
@@ -49,7 +13,7 @@ public:
     {}
 
     bvh_node(
-        std::vector<shared_ptr<hittable>>& objects,
+        std::vector<std::shared_ptr<hittable>>& objects,
         size_t start, size_t end, double time0, double time1);
 
     virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const;
@@ -61,17 +25,34 @@ public:
     aabb box;
 };
 
+inline bool box_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis) {
+    aabb box_a;
+    aabb box_b;
 
-bvh_node::bvh_node(
-    std::vector<shared_ptr<hittable>>& objects,
-    size_t start, size_t end, double time0, double time1
-) {
+    if (!a->bounding_box(0, 0, box_a) || !b->bounding_box(0, 0, box_b))
+        std::cerr << "No bounding box in bvh_node constructor.\n";
+
+    return box_a.min().e[axis] < box_b.min().e[axis];
+}
+
+
+inline bool box_x_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return box_compare(a, b, 0);
+}
+
+inline bool box_y_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return box_compare(a, b, 1);
+}
+
+inline bool box_z_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+    return box_compare(a, b, 2);
+}
+
+bvh_node::bvh_node(std::vector<std::shared_ptr<hittable>>& objects,size_t start, size_t end, double time0, double time1) {
     //随机选择一个轴作为划分节点的依据
     int axis = random_int(0, 2);
     //根据选择的轴，选择对应的比较函数作为排序的依据
-    auto comparator = (axis == 0) ? box_x_compare
-        : (axis == 1) ? box_y_compare
-        : box_z_compare;
+    auto comparator = (axis == 0)? box_x_compare:(axis == 1)?box_y_compare:box_z_compare;
     //计算物体的范围
     size_t object_span = end - start;
     //叶子节点是实际的hittable物体
@@ -100,39 +81,12 @@ bvh_node::bvh_node(
 
     aabb box_left, box_right;
 
-    if (!left->bounding_box(time0, time1, box_left)
-        || !right->bounding_box(time0, time1, box_right)
+    if (!left->bounding_box(time0, time1, box_left)||!right->bounding_box(time0, time1, box_right)
         )
         std::cerr << "No bounding box in bvh_node constructor.\n";
 
     box = surrounding_box(box_left, box_right);
 }
-
-inline bool box_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis) {
-    aabb box_a;
-    aabb box_b;
-
-    if (!a->bounding_box(0, 0, box_a) || !b->bounding_box(0, 0, box_b))
-        std::cerr << "No bounding box in bvh_node constructor.\n";
-
-    return box_a.min().e[axis] < box_b.min().e[axis];
-}
-
-
-bool box_x_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
-    return box_compare(a, b, 0);
-}
-
-bool box_y_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
-    return box_compare(a, b, 1);
-}
-
-bool box_z_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
-    return box_compare(a, b, 2);
-}
-
-
-
 
 
 

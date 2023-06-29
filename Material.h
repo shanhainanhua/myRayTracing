@@ -2,7 +2,7 @@
 #include "Ray.h"
 #include "Vec3.h"
 #include "Hittable.h"
-#include "Vec3.h"
+#include "Texture.h"
 class material {
 public:
     virtual bool scatter(
@@ -12,8 +12,8 @@ public:
 
 class lambertian:public material{
 public:
-    lambertian(const vec3&a):albedo(a){}
-
+    //lambertian(const vec3&a):albedo(a){}
+    lambertian(shared_ptr<texture> a):albedo(a){}
     /// <summary>
     /// 判断是否发生散射
     /// </summary>
@@ -29,11 +29,34 @@ public:
         //return 0.5 * ray_color(ray(rec.p, target - rec.p), sceneObjects, depth - 1); 
         vec3 scatter_direction = rec.normal + random_unit_vector();
         scattered = ray(rec.p, scatter_direction,r_in.time());
+        //attenuation = albedo; //光线的衰减率
+        attenuation = albedo->value(rec.u, rec.v, rec.p);
+        return true;
+    }
+public: 
+    shared_ptr<texture> albedo;
+//private:
+    //vec3 albedo;
+};
+
+
+
+class lambertian_vec :public material {
+public:
+    lambertian_vec(const vec3&a):albedo(a){}
+
+    virtual bool scatter(
+        const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered
+    ) const {
+        //vec3 target = rec.p + rec.normal + vec3::random_unit_vector();
+        //return 0.5 * ray_color(ray(rec.p, target - rec.p), sceneObjects, depth - 1); 
+        vec3 scatter_direction = rec.normal + random_unit_vector();
+        scattered = ray(rec.p, scatter_direction, r_in.time());
         attenuation = albedo; //光线的衰减率
         return true;
     }
-private:
-    vec3 albedo;
+    private:
+        vec3 albedo;
 };
 
 class metal :public material {
