@@ -23,52 +23,52 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Vec3.h">
+    <ClInclude Include="core\Vec3.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Ray.h">
+    <ClInclude Include="core\Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Hittable.h">
+    <ClInclude Include="core\Hittable.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere.h">
+    <ClInclude Include="core\Sphere.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HittableList.h">
+    <ClInclude Include="core\HittableList.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="core\utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="core\Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
+    <ClInclude Include="core\Material.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BVH.h">
+    <ClInclude Include="core\BVH.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="core\Texture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PerLin.h">
+    <ClInclude Include="core\PerLin.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
+    <ClInclude Include="core\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="xyz_rect.h">
+    <ClInclude Include="core\xyz_rect.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="box.h">
+    <ClInclude Include="core\box.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="transform.h">
+    <ClInclude Include="core\transform.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="volume.h">
+    <ClInclude Include="core\volume.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

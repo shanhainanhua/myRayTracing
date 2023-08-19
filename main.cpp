@@ -3,19 +3,19 @@
 #define GL_SILENCE_DEPRECATION
 #include <opencv2/opencv.hpp>
 #include <GLFW/glfw3.h> 
-#include "HittableList.h"
-#include "Sphere.h"
-#include "utils.h"
-#include "Camera.h"
-#include "Material.h"
-#include "BVH.h"
-#include "Texture.h"
+#include "core/HittableList.h"
+#include "core/Sphere.h"
+#include "core/utils.h"
+#include "core/Camera.h"
+#include "core/Material.h"
+#include "core/BVH.h"
+#include "core/Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "xyz_rect.h"
-#include "box.h"
-#include "transform.h"
-#include "volume.h"
+#include "core/stb_image.h"
+#include "core/xyz_rect.h"
+#include "core/box.h"
+#include "core/transform.h"
+#include "core/volume.h"
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);

@@ -135,22 +135,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="box.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Hittable.h" />
-    <ClInclude Include="HittableList.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="PerLin.h" />
-    <ClInclude Include="Ray.h" />
-    <ClInclude Include="Sphere.h" />
-    <ClInclude Include="BVH.h" />
-    <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="transform.h" />
-    <ClInclude Include="utils.h" />
-    <ClInclude Include="Vec3.h" />
-    <ClInclude Include="volume.h" />
-    <ClInclude Include="xyz_rect.h" />
+    <ClInclude Include="core\box.h" />
+    <ClInclude Include="core\Camera.h" />
+    <ClInclude Include="core\Hittable.h" />
+    <ClInclude Include="core\HittableList.h" />
+    <ClInclude Include="core\Material.h" />
+    <ClInclude Include="core\PerLin.h" />
+    <ClInclude Include="core\Ray.h" />
+    <ClInclude Include="core\Sphere.h" />
+    <ClInclude Include="core\BVH.h" />
+    <ClInclude Include="core\stb_image.h" />
+    <ClInclude Include="core\Texture.h" />
+    <ClInclude Include="core\transform.h" />
+    <ClInclude Include="core\utils.h" />
+    <ClInclude Include="core\Vec3.h" />
+    <ClInclude Include="core\volume.h" />
+    <ClInclude Include="core\xyz_rect.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="diff.jpg" />
