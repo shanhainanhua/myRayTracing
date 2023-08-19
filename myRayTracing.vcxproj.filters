@@ -18,26 +18,11 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_impl_glfw.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3_loader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Vec3.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -71,5 +56,28 @@
     <ClInclude Include="PerLin.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="xyz_rect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="box.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="transform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="volume.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="image.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="diff.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

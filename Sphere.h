@@ -21,7 +21,12 @@ private:
     shared_ptr<material> mat_ptr;
 };
 
-
+void get_sphere_uv(const vec3& p, double& u, double& v) {
+    auto phi = atan2(p.z(), p.x());
+    auto theta = asin(p.y());
+    u = 1 - (phi + pi) / (2 * pi);
+    v = (theta + pi / 2) / pi;
+}
 /// <summary>
 /// 计算交点 返回是否有交点，相交信息由结构体存储
 /// 推导过程=>https://shanhainanhua.github.io/2023/04/18/%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA-%E4%B8%80-Whitted-style-Ray-Tracing/
@@ -32,6 +37,8 @@ private:
 /// <param name="rec">记录相交信息</param>
 /// <returns>bool类型，是否相交</returns>
 bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec)const{
+    //计算u，v坐标
+    get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();
     auto half_b = dot(oc, r.direction());
@@ -41,6 +48,9 @@ bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec)const{
     if (discriminant > 0) {
         auto root = sqrt(discriminant);
         auto temp = (-half_b - root) / a;
+
+ 
+
         if (temp < tmax && temp > tmin) {
             rec.t = temp;
             rec.p = r.at(rec.t);
@@ -61,6 +71,7 @@ bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec)const{
     }
     return false;
 }
+
 
 
 bool sphere::bounding_box(double t0, double t1, aabb& output_box) const {
